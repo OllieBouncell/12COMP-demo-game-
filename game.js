@@ -9,10 +9,10 @@ const SCREEN_HEIGHT = 200;;
 const OBSTACLE_HEIGHT = 25;
 const OBSTACLE_WIDTH = 25;
 
-
 var spawnDist = 0;
 var nextSpawn = 0;
-
+let bullets = [];
+var score = 0;
 var lives = 3;
 /*******************************************************/
 // setup()
@@ -20,7 +20,6 @@ var lives = 3;
 
 function preload() {
 imgPlayer = loadImage('/images/player.png');
-
 }
 
 
@@ -31,7 +30,6 @@ function setup() {
     console.log("setup: ");
     
     cnv= new Canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
-    fill('red');
      obstacles = new Group();
 
     wallLH  = new Sprite(0, SCREEN_HEIGHT/2, 8, SCREEN_HEIGHT , 's');
@@ -48,9 +46,10 @@ function setup() {
     wallBot.color = 'lightblue';
     WallBot = noStroke()
    
+    
+    
  
- 
- 
+
  
  
  //P5.play website//
@@ -61,9 +60,8 @@ function setup() {
     imgPlayer.resize(100, 100);
  
 
+ 
 
- 
- 
  
  // Keyboard Movement-Up and Down //
 document.addEventListener("keydown", function(event) {
@@ -103,8 +101,10 @@ else if
 
 obstacles.collides(player, playerHitAlien);
 
-});
+bulletGroup = new Group();
+bulletGroup.collides(obstacle, bulletHitObstacle);
 
+});
 
 
 }
@@ -116,21 +116,31 @@ function draw() {
  player.rotation = 0;
  player.bounciness = 0;
  allSprites.visible = true;
-     for (i = 0; i <lives; i++){
+         for (i = 0; i <lives; i++){
     rect(40 * i, 10, 35, 35);
   }
 
+   textSize(32);
+    text(score, 320, 40);
 
    if(frameCount> nextSpawn){
         newObstacle();
         nextSpawn = frameCount + random(10,200);
     }
+    
 }
 
 
- 
-  
 
+ function keyPressed() {
+  if (keyCode == 32)
+    bullet = new Sprite( player.x + 50, player.y, 5, 'd');
+    bullet.color = 'yellow';
+    bullet.vel.x = 3;
+    bulletGroup.add(bullet);
+    bullet.life = 60;// life of how many frames the bullet lasts
+    
+ }
 
 
 function newObstacle(){
@@ -138,12 +148,17 @@ function newObstacle(){
     var screenY = random(15,200)
     obstacle = new Sprite(SCREEN_WIDTH, screenY, OBSTACLE_WIDTH, OBSTACLE_HEIGHT, 'k');
     obstacle.color = color("green");
-    obstacle.vel.x = -1;
+    obstacle.vel.x = -4;
     
     obstacles.add(obstacle);
 }
 
 
+function bulletHitObstacle(bullet, obstacle) {
+    // Remove bullet and obstacle
+    obstacle.remove();
+     score++;
+}
 
 function playerHitAlien (_player,alien) {
 
@@ -154,8 +169,3 @@ function playerHitAlien (_player,alien) {
  
  
 }
-
-
-
-
-
